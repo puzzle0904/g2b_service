@@ -20,20 +20,44 @@
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
       </property>
-      <item row="4" column="4">
+      <item row="4" column="5">
        <widget class="QPushButton" name="pushButton_del">
         <property name="text">
          <string>DB reset</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="5">
+      <item row="4" column="6">
        <widget class="QPushButton" name="pushButton">
         <property name="text">
          <string>DB다운로드</string>
         </property>
        </widget>
       </item>
+      <item row="4" column="4">
+    <widget class="QComboBox" name="comboBox">
+        <property name="editable">
+            <bool>false</bool>
+        </property>
+        <property name="insertPolicy">
+            <enum>QComboBox::InsertAlphabetically</enum>
+        </property>
+        <item>
+            <property name="text">
+                <string>지역 선택</string>
+            </property>
+        </item>
+        <item>
+            <property name="text">
+                <string>전국</string>
+            </property>
+        </item>        <item>
+            <property name="text">
+                <string>부산</string>
+            </property>
+        </item>
+    </widget>
+    </item>   
       <item row="4" column="1" colspan="2">
        <widget class="QLineEdit" name="lineEdit">
         <property name="text">
