@@ -8,6 +8,7 @@ import json
 import sqlite3      # DBMS 임포트
 import pandas
 import webbrowser
+import subprocess
 
 from urllib import parse, request
 from pandas import DataFrame
@@ -18,6 +19,7 @@ from PyQt5.QtCore import *
 
 from WaitingSpinnerWidget import Overlay                # 로딩 스피너
 import apikey
+import crawling
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # python실행 경로
 
@@ -389,11 +391,65 @@ class MyDialog(QMainWindow, Ui_MainWindow):
         sel_key = self.tableWidget.item(row, 2)
         if sel_key is not None:
             sel_key = sel_key.text()
-            QMessageBox.information(self, "선택한 키", sel_key)
+            self.showCustomDialog(sel_key, row)
         else:
-            QMessageBox.warning(self, "경고", "데이터가 없습니다.")
+            self.showWarningDialog()
+    
+    def showCustomDialog(self, key, row):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("선택한 키")
+        
+        layout = QVBoxLayout()
+        
+        label = QLabel(key)
+        layout.addWidget(label)
+        
+        button_layout = QHBoxLayout()
+        send_button = QPushButton("데이터 전송")
+        send_button.clicked.connect(lambda: self.sendData(dialog, row))
+        button_layout.addWidget(send_button)
+        
+        close_button = QPushButton("닫기")
+        close_button.clicked.connect(dialog.close)
+        button_layout.addWidget(close_button)
+        
+        layout.addLayout(button_layout)
+        dialog.setLayout(layout)
+        
+        dialog.exec_()
+    
+    def sendData(self, dialog, row):
+        sel_key = self.tableWidget.item(row, 0)
+        if sel_key is not None:
+            sel_key = sel_key.text()
+            print(sel_key)
+            
+            con = sqlite3.connect(BASE_DIR + "//" + DB_FILE)
+            cursor = con.cursor()
+            cursor.execute("SELECT * FROM bid_list WHERE bidno=?", (sel_key, ))
+            sel_key = cursor.fetchone()
+            con.close()
+            
+            if sel_key:
+                sel_key = sel_key[5]
+                crawling.crawl_web_page(sel_key)
 
-    # 검색조건 프리셋
+    def showWarningDialog(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("경고")
+        
+        layout = QVBoxLayout()
+        
+        label = QLabel("데이터가 없습니다.")
+        layout.addWidget(label)
+        
+        close_button = QPushButton("닫기")
+        close_button.clicked.connect(dialog.close)
+        layout.addWidget(close_button)
+        
+        dialog.setLayout(layout)
+        
+        dialog.exec_()
 
 
     ## 업무구분
