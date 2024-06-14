@@ -63,6 +63,8 @@ Ui_MainWindow = uic.loadUiType(BASE_DIR+r'/G2BDataAPI.ui')[0]
 global start_time       #데이터 다운로드 시간 계산용 전역변수
 start_time = 0.0
 
+
+
 ## 데이터 크롤링을 담당할 쓰레드
 class CrawlRunnable(QRunnable):
     def __init__(self, dialog):
@@ -276,6 +278,10 @@ class CrawlRunnable(QRunnable):
         self.crawl()
         QMetaObject.invokeMethod(self.w, "search_finish",
                                  Qt.QueuedConnection)
+        
+
+        
+
 
 class MyDialog(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -307,16 +313,33 @@ class MyDialog(QMainWindow, Ui_MainWindow):
         self.radioButton_ctrS.clicked.connect(self.radioB_ctrS)
         self.radioButton_ctrF.clicked.connect(self.radioB_ctrF)
 
+        self.pushButton_login.clicked.connect(self.click) # 로그인 로그아웃 기능 connect
+
         self.tableWidget.cellClicked.connect(self.cell_clicked)
         self.tableWidget.cellDoubleClicked.connect(self.cell_DBclicked)
 
         self.dateEdit_start.setDate(QDate.currentDate())
         self.dateEdit_end.setDate(QDate.currentDate())
 
+        
+
+
+    
     # Pyqt종료시 호출
     def closeEvent(self, event):
         con.close()     # DB연결 종료
         super(MyDialog, self).closeEvent(event)
+
+    #로그인 로그아웃 기능
+    def click(self):
+        current_text = self.pushButton_login.text()
+
+        if current_text =='Login':
+            self.pushButton_login.setText("Logout")
+        #이 밑줄부터 로그인 했을 때, 기능 추가!
+
+        elif current_text =='Logout':
+            self.pushButton_login.setText("Login")
 
     # Resize 이벤트
     def resizeEvent(self, event):
@@ -573,6 +596,8 @@ class MyDialog(QMainWindow, Ui_MainWindow):
     def btn_3months(self):
         self.dateEdit_start.setDate(QDate.currentDate().addMonths(-2))
         self.dateEdit_end.setDate(QDate.currentDate())
+
+    
 
     def arrangecolumn(self):
         table = self.tableWidget
